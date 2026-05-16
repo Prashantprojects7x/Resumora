@@ -300,14 +300,23 @@ export function AuthModal() {
               Google
             </button>
 
-            <div className="mt-8 text-center text-sm text-zinc-600">
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
-              >
-                {isLogin ? 'Sign up' : 'Sign in'}
-              </button>
+            <div className="mt-8 text-center text-sm text-zinc-600 space-y-4">
+              <div>
+                {isLogin ? "Don't have an account? " : "Already have an account? "}
+                <button
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
+                >
+                  {isLogin ? 'Sign up' : 'Sign in'}
+                </button>
+              </div>
+              <p className="text-xs text-zinc-400">
+                By continuing, you agree to our{' '}
+                <a href="/privacy-policy" target="_blank" className="underline hover:text-zinc-600 text-zinc-500 transition-colors">
+                  Privacy Policy
+                </a>
+                .
+              </p>
             </div>
           </div>
         </motion.div>

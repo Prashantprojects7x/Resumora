@@ -5,6 +5,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Editor } from './pages/Editor';
 import { PublicResume } from './pages/PublicResume';
 import { AnalyticsDashboard } from './pages/AnalyticsDashboard';
+import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import './index.css';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -17,6 +18,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/editor/:id" element={<Editor />} />
           <Route path="/p/:slug" element={<PublicResume />} />
           <Route path="/analytics/:slug" element={<AnalyticsDashboard />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

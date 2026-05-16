@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from '../contexts/AuthContext';
 import { getUserResumes, saveResume, deleteResume, renameResume, duplicateResume, SavedResume } from '../lib/resumeService';
@@ -347,7 +347,7 @@ export function Dashboard() {
               © {new Date().getFullYear()} Resumora. All rights reserved.
             </span>
             <div className="flex items-center gap-3 text-[13px]">
-              <a href="#" className="text-zinc-500 hover:text-indigo-600 transition-colors font-medium">Privacy Policy</a>
+              <Link to="/privacy-policy" className="text-zinc-500 hover:text-indigo-600 transition-colors font-medium">Privacy Policy</Link>
               <a 
                 href="https://devprashantprajapati.netlify.app/" 
                 target="_blank" 
