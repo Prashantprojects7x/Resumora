@@ -2,6 +2,7 @@ import { useResumeStore } from '@/store/useResumeStore';
 import { Button } from '../ui/Button';
 import { Plus, Trash2, GripVertical, Settings2, LayoutTemplate } from 'lucide-react';
 import { Reorder } from 'framer-motion';
+import { v4 as uuidv4 } from 'uuid';
 
 const defaultSectionLabels: Record<string, string> = {
   experience: 'Experience',
@@ -94,7 +95,7 @@ export function LayoutForm() {
         className="w-full border-dashed border-2 border-zinc-300/80 bg-zinc-50/50 hover:border-indigo-300 hover:bg-indigo-50/50 text-zinc-600 hover:text-indigo-700 transition-all duration-300 rounded-xl h-12 shadow-sm hover:shadow-md font-semibold group"
         onClick={() => {
           addCustomSection({
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             name: 'New Section',
             items: []
           });

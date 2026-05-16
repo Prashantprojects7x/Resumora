@@ -145,7 +145,7 @@ export function AnalyticsDashboard() {
     );
   }
 
-  let topLocation = locationData.length > 0 ? locationData[0].name : 'N/A';
+  const topLocation = locationData.length > 0 ? locationData[0].name : 'N/A';
 
   // Calculate Avg Time Spent
   const viewsWithTime = analytics.recentViews.filter(v => v.timeSpent && v.timeSpent > 0);

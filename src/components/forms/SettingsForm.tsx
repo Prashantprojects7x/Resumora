@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useResumeStore } from '@/store/useResumeStore';
 import { Button } from '../ui/Button';
-import { RotateCcw, AlertTriangle, Cloud, LogOut, LogIn, Check, Sparkles, Wand2, Type, LayoutTemplate, Box, AlignLeft, Calendar } from 'lucide-react';
+import { RotateCcw, AlertTriangle, Cloud, LogOut, LogIn, Check, Sparkles, Wand2, Type, LayoutTemplate, Box, AlignLeft, Calendar, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { saveResume } from '@/lib/resumeService';
 import { toast } from 'sonner';
@@ -157,50 +157,50 @@ export function SettingsForm() {
     <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8 pb-10">
       
       {/* Cloud Sync Banner */}
-      <motion.div variants={itemVariants} className="relative overflow-hidden p-6 sm:p-8 bg-gradient-to-br from-indigo-900 via-indigo-800 to-violet-900 rounded-[2rem] text-white shadow-xl shadow-indigo-900/20">
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-          <Cloud className="w-48 h-48 -mt-10 -mr-10 transform rotate-12" />
-        </div>
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-          <div className="space-y-1.5">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-indigo-300" />
+      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 p-5 sm:p-6 bg-white border border-zinc-200 rounded-2xl shadow-sm">
+        <div className="flex items-start sm:items-center gap-4">
+          <div className="shrink-0 w-11 h-11 rounded-full bg-indigo-50/80 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-inner">
+            <Cloud className="w-5 h-5" />
+          </div>
+          <div className="flex flex-col">
+            <h3 className="font-semibold text-zinc-900 text-[15px] flex items-center gap-1.5">
               Cloud Sync Workspace
+              {user && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
             </h3>
-            <p className="text-indigo-200/80 text-sm max-w-sm">
+            <p className="text-zinc-500 text-sm mt-0.5 leading-snug">
               {user 
-                ? `Logged in as ${user.email}. Your progress is safe with us.` 
-                : 'Sign in to seamlessly save and access your resume securely from anywhere.'}
+                ? user.email
+                : 'Sign in to seamlessly save and access your resume'}
             </p>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
-            {user ? (
-              <>
-                <Button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="bg-white text-indigo-900 hover:bg-zinc-100 font-semibold px-6 py-5 rounded-xl shadow-lg shadow-black/10 transition-all active:scale-95"
-                >
-                  {isSaving ? 'Syncing...' : 'Sync to Cloud'}
-                </Button>
-                <button
-                  onClick={logout}
-                  className="p-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors"
-                  title="Log out"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </>
-            ) : (
+        </div>
+        <div className="flex items-center gap-2.5 w-full sm:w-auto mt-1 sm:mt-0">
+          {user ? (
+            <>
               <Button
-                onClick={openAuthModal}
-                className="bg-white text-indigo-900 hover:bg-indigo-50 font-semibold px-6 py-5 rounded-xl shadow-lg border-0 transition-all active:scale-95 flex items-center gap-2"
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex-1 sm:flex-initial bg-zinc-900 text-white hover:bg-zinc-800 font-medium px-5 py-2.5 h-10 rounded-xl text-sm transition-all shadow-sm"
               >
-                <LogIn className="w-4 h-4" />
-                Sign in to Sync
+                {isSaving ? 'Syncing...' : 'Sync to Cloud'}
               </Button>
-            )}
-          </div>
+              <button
+                onClick={logout}
+                className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 text-zinc-600 hover:text-zinc-900 transition-colors"
+                title="Log out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <Button
+              onClick={openAuthModal}
+              className="flex-1 sm:flex-initial justify-center bg-zinc-900 text-white hover:bg-zinc-800 font-medium px-5 py-2.5 h-10 rounded-xl text-sm transition-all shadow-sm flex items-center gap-2"
+            >
+              <LogIn className="w-4 h-4" />
+              Sign in to Sync
+            </Button>
+          )}
         </div>
       </motion.div>
 

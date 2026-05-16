@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { ResumeData } from "../types/resume";
+import { v4 as uuidv4 } from "uuid";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -588,7 +589,7 @@ export async function structureResumeData(rawText: string, pdfBase64?: string): 
       if (Array.isArray(parsedData[key])) {
         parsedData[key] = parsedData[key].map((item: any) => ({
           ...item,
-          id: item.id || crypto.randomUUID()
+          id: item.id || uuidv4()
         }));
       }
     });
@@ -596,7 +597,7 @@ export async function structureResumeData(rawText: string, pdfBase64?: string): 
     if (parsedData.personalInfo?.links && Array.isArray(parsedData.personalInfo.links)) {
         parsedData.personalInfo.links = parsedData.personalInfo.links.map((link: any) => ({
             ...link,
-            id: link.id || crypto.randomUUID()
+            id: link.id || uuidv4()
         }));
     }
 

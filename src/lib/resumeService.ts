@@ -1,6 +1,7 @@
 import { db, auth } from './firebase';
 import { collection, doc, setDoc, getDoc, getDocs, query, where, deleteDoc, serverTimestamp, Timestamp, onSnapshot } from 'firebase/firestore';
 import { ResumeData } from '@/types/resume';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface SavedResume {
   id: string;
@@ -192,7 +193,7 @@ export const duplicateResume = async (originalId: string): Promise<SavedResume |
     }
 
     const originalData = originalDoc.data();
-    const newId = crypto.randomUUID(); // Note: Assumes environment supports this
+    const newId = uuidv4(); 
     const newTitle = `${originalData.title || 'Untitled'} (Copy)`;
     
     const payload = {
