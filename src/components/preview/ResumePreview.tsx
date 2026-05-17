@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { exportTXT, exportJSON, exportDOCX, exportMarkdown, exportHTML, exportPDF } from '@/lib/exportUtils';
 import { useReactToPrint } from 'react-to-print';
 import { ATSChecker } from './ATSChecker';
+import { JobSearchGenerator } from './JobSearchModal';
 import { CoverLetterGenerator } from './CoverLetterGenerator';
 import { InterviewPrepGenerator } from './InterviewPrepGenerator';
 import { LinkedInImporter } from './LinkedInImporter';
@@ -307,6 +308,7 @@ export function ResumePreview() {
                 </AnimatePresence>
               </div>
 
+              <JobSearchGenerator />
               <CoverLetterGenerator />
               <InterviewPrepGenerator />
               <LinkedInImporter />

@@ -421,6 +421,77 @@ export async function translateResumeData(resumeData: ResumeData, targetLanguage
   }
 }
 
+export interface JobOpportunity {
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  applyLink: string;
+  matchScore: number;
+  salaryRange: string;
+  jobType: string;
+  topSkills: string[];
+  matchReason: string;
+}
+
+export async function searchJobs(resumeContent: string): Promise<JobOpportunity[]> {
+  try {
+    const prompt = `You are an expert career agent and executive recruiter. 
+    Review the provided Resume Content. Your task is to find 5 highly relevant real-world job opportunities (both private sector and government) available right now.
+    You MUST search the web to find actual, active job listings online that strongly match the candidate's skills and experience.
+    
+    Resume Content:
+    ${resumeContent}
+    
+    Return a detailed JSON array of objects. Each object must have:
+    - title: Job Title
+    - company: Company Name
+    - location: Job Location (or specify Remote)
+    - description: A brief 2-sentence summary of the role.
+    - applyLink: The actual URL to apply or view the job posting (this must be a real link found from your search)
+    - matchScore: A realistic match score from 0 to 100 based on the resume vs the job.
+    - salaryRange: The estimated or actual salary range (e.g. "$120k - $150k" or "Competitive").
+    - jobType: "Full-time", "Contract", "Remote", etc.
+    - topSkills: An array of 3-5 top skills specifically required by this job.
+    - matchReason: 1 sentence explaining exactly why this candidate is a great fit.
+    `;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-pro-preview",
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }],
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              company: { type: Type.STRING },
+              location: { type: Type.STRING },
+              description: { type: Type.STRING },
+              applyLink: { type: Type.STRING },
+              matchScore: { type: Type.INTEGER },
+              salaryRange: { type: Type.STRING },
+              jobType: { type: Type.STRING },
+              topSkills: { type: Type.ARRAY, items: { type: Type.STRING } },
+              matchReason: { type: Type.STRING }
+            },
+            required: ["title", "company", "location", "description", "applyLink", "matchScore", "salaryRange", "jobType", "topSkills", "matchReason"]
+          }
+        }
+      }
+    });
+
+    return parseJsonResponse(response.text) as JobOpportunity[];
+  } catch (error) {
+    console.error("Error searching jobs:", error);
+    throw error;
+  }
+}
+
+
 export async function structureResumeData(rawText: string, pdfBase64?: string): Promise<Partial<ResumeData>> {
   try {
     const prompt = `You are an expert resume parser. Extract the information from the following raw resume (which might be a LinkedIn PDF export or a standard resume) and structure it into a JSON object.
