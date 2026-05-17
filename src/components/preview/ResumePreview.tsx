@@ -9,7 +9,7 @@ import { ExecutiveTemplate } from './templates/ExecutiveTemplate';
 import { PremiumTemplate } from './templates/PremiumTemplate';
 import { AcademicTemplate } from './templates/AcademicTemplate';
 import { StudioTemplate } from './templates/StudioTemplate';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useDeferredValue } from 'react';
 import { Button } from '../ui/Button';
 import { Download, ChevronDown, FileText, FileJson, FileType2, FileCode, ZoomIn, ZoomOut, Maximize, Printer } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -26,7 +26,8 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { toast } from 'sonner';
 
 export function ResumePreview() {
-  const { data } = useResumeStore();
+  const { data: rawData } = useResumeStore();
+  const data = useDeferredValue(rawData);
   const { template, fontSize } = data.settings;
   const componentRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,27 +91,27 @@ export function ResumePreview() {
   const getTemplate = () => {
     switch (template) {
       case 'modern':
-        return <ModernTemplate />;
+        return <ModernTemplate data={data} />;
       case 'minimal':
-        return <MinimalTemplate />;
+        return <MinimalTemplate data={data} />;
       case 'corporate':
-        return <CorporateTemplate />;
+        return <CorporateTemplate data={data} />;
       case 'creative':
-        return <CreativeTemplate />;
+        return <CreativeTemplate data={data} />;
       case 'elegant':
-        return <ElegantTemplate />;
+        return <ElegantTemplate data={data} />;
       case 'tech':
-        return <TechTemplate />;
+        return <TechTemplate data={data} />;
       case 'executive':
-        return <ExecutiveTemplate />;
+        return <ExecutiveTemplate data={data} />;
       case 'premium':
-        return <PremiumTemplate />;
+        return <PremiumTemplate data={data} />;
       case 'academic':
-        return <AcademicTemplate />;
+        return <AcademicTemplate data={data} />;
       case 'studio':
-        return <StudioTemplate />;
+        return <StudioTemplate data={data} />;
       default:
-        return <ModernTemplate />;
+        return <ModernTemplate data={data} />;
     }
   };
 

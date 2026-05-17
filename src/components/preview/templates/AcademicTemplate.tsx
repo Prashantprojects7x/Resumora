@@ -1,10 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
+import { Github, Linkedin, Globe } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-export function AcademicTemplate({ data: propData }: { data?: ResumeData }) {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+export function AcademicTemplate({ data }: { data: ResumeData }) {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -47,6 +45,12 @@ export function AcademicTemplate({ data: propData }: { data?: ResumeData }) {
           {(personalInfo.city || personalInfo.country) && (
             <span>{personalInfo.city}{personalInfo.city && personalInfo.country ? ', ' : ''}{personalInfo.country}</span>
           )}
+            {personalInfo.linkedin && <span>•</span>}
+            {personalInfo.linkedin && <span>{personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>}
+            {personalInfo.github && <span>•</span>}
+            {personalInfo.github && <span>{personalInfo.github.replace(/^https?:\/\//, '')}</span>}
+            {personalInfo.portfolio && <span>•</span>}
+            {personalInfo.portfolio && <span>{personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>}
         </div>
         
         {personalInfo.links && personalInfo.links.length > 0 && (

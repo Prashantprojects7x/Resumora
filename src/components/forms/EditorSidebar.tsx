@@ -33,13 +33,13 @@ const STATIC_CONTENT_SECTIONS = [
 const SETTINGS_SECTION = { id: 'settings', label: 'Design & Settings', icon: Palette, component: SettingsForm };
 
 export function EditorSidebar() {
-  const { data } = useResumeStore();
+  const customSections = useResumeStore(state => state.data.customSections);
   const [activeSection, setActiveSection] = useState(STATIC_CONTENT_SECTIONS[0].id);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeItemRef = useRef<HTMLButtonElement>(null);
 
   const CONTENT_SECTIONS = useMemo(() => {
-    const customTabs = (data.customSections || []).map(cs => ({
+    const customTabs = (customSections || []).map(cs => ({
       id: `custom_${cs.id}`,
       label: cs.name || 'Custom Section',
       icon: FilePlus2,
@@ -51,7 +51,7 @@ export function EditorSidebar() {
       { id: 'layout', label: 'Layout & Sections', icon: LayoutTemplate, component: LayoutForm },
       { id: 'ai-tools', label: 'AI Career Tools', icon: Bot, component: AIToolsForm },
     ];
-  }, [data.customSections]);
+  }, [customSections]);
 
   const ALL_SECTIONS = [...CONTENT_SECTIONS, SETTINGS_SECTION];
   const ActiveComponent = ALL_SECTIONS.find(s => s.id === activeSection)?.component || PersonalInfoForm;

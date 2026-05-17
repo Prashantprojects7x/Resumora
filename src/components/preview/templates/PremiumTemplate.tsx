@@ -1,11 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
-import { Mail, Phone, MapPin, Link as LinkIcon, Briefcase, GraduationCap, Award, Code, User, Globe, Heart, Star } from 'lucide-react';
+import { Mail, Phone, MapPin, Link as LinkIcon, Briefcase, GraduationCap, Award, Code, User, Globe, Heart, Star, Github, Linkedin } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-const PremiumTemplate = ({ data: propData }: { data?: ResumeData }) => {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+const PremiumTemplate = ({ data }: { data: ResumeData }) => {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -78,6 +75,15 @@ const PremiumTemplate = ({ data: propData }: { data?: ResumeData }) => {
                 <MapPin className="w-4 h-4" style={{ color }} /> {personalInfo.city}{personalInfo.city && personalInfo.country ? ', ' : ''}{personalInfo.country}
               </span>
             )}
+            {personalInfo.linkedin && (
+              <span className="flex items-center gap-2 hover:text-white transition-colors"><Linkedin className="w-4 h-4" style={{ color }} /> {personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.github && (
+              <span className="flex items-center gap-2 hover:text-white transition-colors"><Github className="w-4 h-4" style={{ color }} /> {personalInfo.github.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.portfolio && (
+              <span className="flex items-center gap-2 hover:text-white transition-colors"><Globe className="w-4 h-4" style={{ color }} /> {personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>
+            )}
             {(personalInfo.links || []).map(link => (
               <span key={link.id} className="flex items-center gap-2 hover:text-white transition-colors">
                 <LinkIcon className="w-4 h-4" style={{ color }} /> <a href={`https://${link.url.replace(/^https?:\/\//, '')}`}>{link.label}</a>
@@ -131,13 +137,18 @@ const PremiumTemplate = ({ data: propData }: { data?: ResumeData }) => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {projects.map(project => (
                   <div key={project.id} className="bg-white p-5 rounded-xl border border-zinc-200 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-base font-bold text-zinc-900">{project.name}</h4>
-                      {project.url && (
-                        <a href={`https://${project.url.replace(/^https?:\/\//, '')}`} className="text-zinc-400 hover:text-zinc-900">
-                          <LinkIcon className="w-4 h-4" />
-                        </a>
-                      )}
+                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-base font-bold text-zinc-900">{project.name}</h4>
+                        {project.url && (
+                          <a href={`https://${project.url.replace(/^https?:\/\//, '')}`} className="text-zinc-400 hover:text-zinc-900">
+                            <LinkIcon className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                      <div className="text-xs font-semibold text-zinc-500 mt-1 sm:mt-0">
+                        {project.startDate} {project.startDate || project.endDate ? '-' : ''} {project.endDate}
+                      </div>
                     </div>
                     <p className={`text-sm text-zinc-600 leading-relaxed mb-4 ${bodyAlignClass}`}>{project.description}</p>
                   </div>

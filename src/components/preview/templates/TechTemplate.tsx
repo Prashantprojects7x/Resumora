@@ -1,11 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
-import { Mail, Phone, MapPin, Link as LinkIcon, Terminal, Code2, Database, Cpu } from 'lucide-react';
+import { Mail, Phone, MapPin, Link as LinkIcon, Terminal, Code2, Database, Cpu, Github, Linkedin, Globe } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-export function TechTemplate({ data: propData }: { data?: ResumeData }) {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+export function TechTemplate({ data }: { data: ResumeData }) {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -53,6 +50,15 @@ export function TechTemplate({ data: propData }: { data?: ResumeData }) {
               <span className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" style={{ color }} /> {personalInfo.city}{personalInfo.city && personalInfo.country ? ', ' : ''}{personalInfo.country}
               </span>
+            )}
+            {personalInfo.linkedin && (
+              <span className="flex items-center gap-2"><Linkedin className="w-4 h-4" style={{ color }} /> {personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.github && (
+              <span className="flex items-center gap-2"><Github className="w-4 h-4" style={{ color }} /> {personalInfo.github.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.portfolio && (
+              <span className="flex items-center gap-2"><Globe className="w-4 h-4" style={{ color }} /> {personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>
             )}
             {(personalInfo.links || []).map(link => (
               <span key={link.id} className="flex items-center gap-2">

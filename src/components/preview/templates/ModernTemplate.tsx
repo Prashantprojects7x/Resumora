@@ -1,11 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
-import { Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
+import { Mail, Phone, MapPin, Link as LinkIcon, Github, Linkedin, Globe } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-export function ModernTemplate({ data: propData }: { data?: ResumeData }) {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+export function ModernTemplate({ data }: { data: ResumeData }) {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -299,6 +296,15 @@ export function ModernTemplate({ data: propData }: { data?: ResumeData }) {
               <span className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" /> {personalInfo.city}{personalInfo.city && personalInfo.country ? ', ' : ''}{personalInfo.country}
               </span>
+            )}
+            {personalInfo.linkedin && (
+              <span className="flex items-center gap-2"><Linkedin className="w-4 h-4" /> {personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.github && (
+              <span className="flex items-center gap-2"><Github className="w-4 h-4" /> {personalInfo.github.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.portfolio && (
+              <span className="flex items-center gap-2"><Globe className="w-4 h-4" /> {personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>
             )}
             {(personalInfo.links || []).map(link => (
               <span key={link.id} className="flex items-center gap-2">

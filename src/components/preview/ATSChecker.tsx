@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useDeferredValue } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, X, CheckCircle2, AlertCircle, Target, ChevronRight, Briefcase, Sparkles, Loader2 } from 'lucide-react';
@@ -19,7 +19,9 @@ export function ATSChecker() {
 
   const { data } = useResumeStore();
   
-  const result = analyzeResume(data);
+  // Defer the analysis to avoid blocking the main thread during typing
+  const deferredData = useDeferredValue(data);
+  const result = analyzeResume(deferredData);
   
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-emerald-500';

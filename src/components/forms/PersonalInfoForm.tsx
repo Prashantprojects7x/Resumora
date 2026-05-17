@@ -223,11 +223,41 @@ export function PersonalInfoForm() {
             placeholder="USA"
           />
         </div>
+        <div className="space-y-2 md:col-span-2 mt-2 pt-4 border-t border-zinc-200/60">
+          <Label>Social Accounts</Label>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="linkedin">LinkedIn</Label>
+          <Input 
+            id="linkedin" 
+            value={personalInfo.linkedin || ''} 
+            onChange={(e) => updatePersonalInfo({ linkedin: e.target.value })} 
+            placeholder="linkedin.com/in/johndoe"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="github">GitHub</Label>
+          <Input 
+            id="github" 
+            value={personalInfo.github || ''} 
+            onChange={(e) => updatePersonalInfo({ github: e.target.value })} 
+            placeholder="github.com/johndoe"
+          />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="portfolio">Portfolio / Website</Label>
+          <Input 
+            id="portfolio" 
+            value={personalInfo.portfolio || ''} 
+            onChange={(e) => updatePersonalInfo({ portfolio: e.target.value })} 
+            placeholder="johndoe.dev"
+          />
+        </div>
       </div>
 
       <div className="space-y-4 pt-4 border-t border-zinc-200/60">
         <div>
-          <Label>Social Links & Portfolio</Label>
+          <Label>Additional Links</Label>
           <p className="text-xs text-zinc-500 mt-1">Add links to your LinkedIn, GitHub, or personal website.</p>
         </div>
         

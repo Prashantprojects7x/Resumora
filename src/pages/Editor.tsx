@@ -26,10 +26,9 @@ export function Editor() {
   const navigate = useNavigate();
   const [showPreview, setShowPreview] = useState(false);
   const { user, openAuthModal, logout } = useAuth();
-  const { data, updateData, resetData } = useResumeStore();
+  const updateData = useResumeStore(state => state.updateData);
+  const resetData = useResumeStore(state => state.resetData);
   const [isLoading, setIsLoading] = useState(false);
-  const autoSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const draftSyncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialLoadRef = useRef(true);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
@@ -50,8 +49,6 @@ export function Editor() {
           if (savedResume && savedResume.data) {
             updateData(savedResume.data);
             toast.success('Resume loaded from cloud');
-          } else {
-            // New resume scenario (just starting) doesn't have data on the server yet.
           }
         } catch (error) {
           console.error('Failed to load resume:', error);
@@ -69,59 +66,52 @@ export function Editor() {
     loadUserResume();
   }, [user, id, updateData]);
 
-  // Auto-sync draft resume to cloud when logged in
+  // Auto-sync logic
   useEffect(() => {
-    if (isInitialLoadRef.current || !user || !id || isLoading) return;
+    let draftTimeout: NodeJS.Timeout | null = null;
+    let publishTimeout: NodeJS.Timeout | null = null;
 
-    if (draftSyncTimeoutRef.current) {
-      clearTimeout(draftSyncTimeoutRef.current);
-    }
-    
-    setSyncState('syncing');
+    const unsub = useResumeStore.subscribe((state, prevState) => {
+      if (isInitialLoadRef.current || !user || !id || isLoading) return;
+      if (state.data === prevState.data) return;
 
-    draftSyncTimeoutRef.current = setTimeout(async () => {
-      try {
-        const title = `${data.personalInfo.firstName || 'My'} Resume`;
-        await saveResume(id, title, data);
-        setSyncState('saved');
-        setTimeout(() => setSyncState('idle'), 2000);
-        console.log('Auto-saved draft to cloud');
-      } catch (error) {
-        console.error('Failed to auto-save draft:', error);
-        setSyncState('idle');
+      const data = state.data;
+
+      // Draft Sync
+      if (draftTimeout) clearTimeout(draftTimeout);
+      setSyncState('syncing');
+
+      draftTimeout = setTimeout(async () => {
+        try {
+          const title = `${data.personalInfo.firstName || 'My'} Resume`;
+          await saveResume(id, title, data);
+          setSyncState('saved');
+          setTimeout(() => setSyncState('idle'), 2000);
+        } catch (error) {
+          console.error('Failed to auto-save draft:', error);
+          setSyncState('idle');
+        }
+      }, 2000);
+
+      // Published Sync
+      if (data.settings.publishedSlug) {
+        if (publishTimeout) clearTimeout(publishTimeout);
+        publishTimeout = setTimeout(async () => {
+          try {
+            await publishResume(data.settings.publishedSlug!, data);
+          } catch (error) {
+            console.error('Failed to auto-sync published resume:', error);
+          }
+        }, 2000);
       }
-    }, 2000); // Debounce for 2 seconds
+    });
 
     return () => {
-      if (draftSyncTimeoutRef.current) {
-        clearTimeout(draftSyncTimeoutRef.current);
-      }
+      if (draftTimeout) clearTimeout(draftTimeout);
+      if (publishTimeout) clearTimeout(publishTimeout);
+      unsub();
     };
-  }, [data, user, id, isLoading]);
-
-  // Auto-sync published resume
-  useEffect(() => {
-    if (isInitialLoadRef.current || !user || !data.settings.publishedSlug || isLoading) return;
-
-    if (autoSyncTimeoutRef.current) {
-      clearTimeout(autoSyncTimeoutRef.current);
-    }
-
-    autoSyncTimeoutRef.current = setTimeout(async () => {
-      try {
-        await publishResume(data.settings.publishedSlug!, data);
-        console.log('Auto-synced published resume');
-      } catch (error) {
-        console.error('Failed to auto-sync published resume:', error);
-      }
-    }, 2000); // Debounce for 2 seconds
-
-    return () => {
-      if (autoSyncTimeoutRef.current) {
-        clearTimeout(autoSyncTimeoutRef.current);
-      }
-    };
-  }, [data, user, isLoading]);
+  }, [user, id, isLoading]);
 
   return (
     <div className="flex flex-col h-[100dvh] bg-mesh-pattern overflow-hidden font-sans selection:bg-zinc-900 selection:text-white">

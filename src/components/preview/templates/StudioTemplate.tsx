@@ -1,11 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
-import { Mail, Phone, MapPin, Link as LinkIcon, Briefcase, GraduationCap, Code, Award, Languages, Heart, Users } from 'lucide-react';
+import { Mail, Phone, MapPin, Link as LinkIcon, Briefcase, GraduationCap, Code, Award, Languages, Heart, Users, Github, Linkedin, Globe } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-export function StudioTemplate({ data: propData }: { data?: ResumeData }) {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+export function StudioTemplate({ data }: { data: ResumeData }) {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -75,6 +72,15 @@ export function StudioTemplate({ data: propData }: { data?: ResumeData }) {
               {personalInfo.city}{personalInfo.city && personalInfo.country ? ', ' : ''}{personalInfo.country}
             </span>
           )}
+            {personalInfo.linkedin && (
+              <span className="flex items-center gap-1.5"><Linkedin className="w-3.5 h-3.5" style={{ color }} /> {personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.github && (
+              <span className="flex items-center gap-1.5"><Github className="w-3.5 h-3.5" style={{ color }} /> {personalInfo.github.replace(/^https?:\/\//, '')}</span>
+            )}
+            {personalInfo.portfolio && (
+              <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" style={{ color }} /> {personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>
+            )}
           {(personalInfo.links || []).map(link => (
             <span key={link.id} className="flex items-center gap-1.5">
               <LinkIcon className="w-3.5 h-3.5" style={{ color }} /> 
@@ -181,11 +187,16 @@ export function StudioTemplate({ data: propData }: { data?: ResumeData }) {
                   <div key={project.id}>
                     <div className="flex items-baseline justify-between mb-1">
                       <h4 className="text-[15px] font-bold text-zinc-900">{project.name}</h4>
-                      {project.url && (
-                        <a href={`https://${project.url.replace(/^https?:\/\//, '')}`} className="text-xs font-bold hover:underline" style={{ color }}>
-                          View Project ↗
-                        </a>
-                      )}
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-xs font-bold text-zinc-400 uppercase tracking-widest">
+                          {formatPeriod(project.startDate, project.endDate, false)}
+                        </span>
+                        {project.url && (
+                          <a href={`https://${project.url.replace(/^https?:\/\//, '')}`} className="text-xs font-bold hover:underline" style={{ color }}>
+                            View Project ↗
+                          </a>
+                        )}
+                      </div>
                     </div>
                     {project.description && (
                       <p className="text-[13px] text-zinc-600 leading-relaxed font-medium mt-1">{project.description}</p>

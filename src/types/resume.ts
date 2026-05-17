@@ -10,6 +10,9 @@ export type ResumeData = {
     title: string;
     summary: string;
     photoUrl?: string;
+    github?: string;
+    linkedin?: string;
+    portfolio?: string;
     links: { id: string; label: string; url: string }[];
   };
   experience: {
@@ -124,6 +127,9 @@ export const emptyResumeData: ResumeData = {
     country: '',
     title: '',
     summary: '',
+    github: '',
+    linkedin: '',
+    portfolio: '',
     links: [],
   },
   experience: [],
@@ -179,6 +185,9 @@ export const initialResumeData: ResumeData = {
     country: 'USA',
     title: 'Senior Software Engineer',
     summary: 'Passionate and results-driven software engineer with 5+ years of experience in full-stack development. Proven ability to architect scalable solutions and lead cross-functional teams to deliver high-quality products.',
+    github: 'github.com/johndoe',
+    linkedin: 'linkedin.com/in/johndoe',
+    portfolio: 'johndoe.dev',
     links: [
       { id: '1', label: 'LinkedIn', url: 'linkedin.com/in/johndoe' },
       { id: '2', label: 'GitHub', url: 'github.com/johndoe' },

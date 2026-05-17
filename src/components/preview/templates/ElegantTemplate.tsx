@@ -1,11 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
-import { Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
+import { Mail, Phone, MapPin, Link as LinkIcon, Github, Linkedin, Globe } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-export function ElegantTemplate({ data: propData }: { data?: ResumeData }) {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+export function ElegantTemplate({ data }: { data: ResumeData }) {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -40,6 +37,9 @@ export function ElegantTemplate({ data: propData }: { data?: ResumeData }) {
             {(personalInfo.city || personalInfo.country) && (
               <span>{personalInfo.city}{personalInfo.city && personalInfo.country ? ', ' : ''}{personalInfo.country}</span>
             )}
+            {personalInfo.linkedin && <span>{personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>}
+            {personalInfo.github && <span>{personalInfo.github.replace(/^https?:\/\//, '')}</span>}
+            {personalInfo.portfolio && <span>{personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>}
             {(personalInfo.links || []).map(link => (
               <a key={link.id} href={`https://${link.url.replace(/^https?:\/\//, '')}`} className="hover:underline" style={{ color }}>{link.label}</a>
             ))}

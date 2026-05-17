@@ -1,11 +1,8 @@
-import { useResumeStore } from '@/store/useResumeStore';
-import { Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
+import { Mail, Phone, MapPin, Link as LinkIcon, Github, Linkedin, Globe } from 'lucide-react';
 import { ResumeData } from '@/types/resume';
 import { ResumeQRCode } from '@/components/ui/ResumeQRCode';
 
-export function CreativeTemplate({ data: propData }: { data?: ResumeData }) {
-  const storeData = useResumeStore(state => state.data);
-  const data = propData || storeData;
+export function CreativeTemplate({ data }: { data: ResumeData }) {
   const { personalInfo, experience, education, skills, projects, certifications, languages, interests, references, settings } = data;
 
   const color = settings.color;
@@ -72,6 +69,24 @@ export function CreativeTemplate({ data: propData }: { data?: ResumeData }) {
                 <div className="flex items-center gap-3">
                   <Phone className="w-4 h-4 shrink-0 text-white/70" />
                   <span>{personalInfo.phone}</span>
+                </div>
+              )}
+              {personalInfo.linkedin && (
+                <div className="flex items-center gap-3">
+                  <Linkedin className="w-4 h-4 shrink-0 text-white/70" />
+                  <span>{personalInfo.linkedin.replace(/^https?:\/\//, '')}</span>
+                </div>
+              )}
+              {personalInfo.github && (
+                <div className="flex items-center gap-3">
+                  <Github className="w-4 h-4 shrink-0 text-white/70" />
+                  <span>{personalInfo.github.replace(/^https?:\/\//, '')}</span>
+                </div>
+              )}
+              {personalInfo.portfolio && (
+                <div className="flex items-center gap-3">
+                  <Globe className="w-4 h-4 shrink-0 text-white/70" />
+                  <span>{personalInfo.portfolio.replace(/^https?:\/\//, '')}</span>
                 </div>
               )}
               {(personalInfo.city || personalInfo.country) && (
