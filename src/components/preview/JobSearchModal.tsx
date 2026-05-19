@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, Briefcase, MapPin, Building, ExternalLink, Loader2, Globe, Target, Sparkles, CheckCircle2, DollarSign, Clock, Layout } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useResumeStore } from '@/store/useResumeStore';
-import { searchJobs, JobOpportunity } from '@/services/ai';
+import { searchJobsStream, JobOpportunity } from '@/services/ai';
 
 const LOADING_STEPS = [
   "Analyzing resume structure...",
@@ -43,6 +43,7 @@ export function JobSearchGenerator() {
   const handleSearch = async () => {
     setIsLoading(true);
     setHasSearched(true);
+    setJobs([]);
     
     try {
       const resumeContext = `
@@ -53,8 +54,10 @@ export function JobSearchGenerator() {
         Location: ${deferredData.personalInfo.city}, ${deferredData.personalInfo.country}
       `;
       
-      const results = await searchJobs(resumeContext);
-      setJobs(results);
+      const stream = searchJobsStream(resumeContext);
+      for await (const job of stream) {
+        setJobs(prev => [...prev, job]);
+      }
     } catch (error) {
       console.error('Error fetching jobs:', error);
     } finally {
@@ -134,7 +137,7 @@ export function JobSearchGenerator() {
                         Start Deep Search
                       </Button>
                     </div>
-                  ) : isLoading ? (
+                  ) : isLoading && jobs.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full min-h-[350px] space-y-8">
                       <div className="relative">
                         <div className="absolute inset-0 bg-blue-500 rounded-full blur-[40px] opacity-20 animate-pulse" />
@@ -159,7 +162,7 @@ export function JobSearchGenerator() {
                         </div>
                       </div>
                     </div>
-                  ) : jobs.length === 0 ? (
+                  ) : jobs.length === 0 && !isLoading ? (
                     <div className="flex flex-col items-center justify-center h-full min-h-[350px] text-center">
                       <div className="w-20 h-20 bg-amber-50 rounded-2xl flex items-center justify-center mb-6 border border-amber-100 shadow-sm">
                         <Search className="w-10 h-10 text-amber-500" />
@@ -175,6 +178,16 @@ export function JobSearchGenerator() {
                     </div>
                   ) : (
                     <div className="space-y-4">
+                      {isLoading && (
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0 }} 
+                          animate={{ opacity: 1, height: 'auto' }}
+                          className="flex items-center gap-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/60 shadow-inner mb-2"
+                        >
+                          <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                          <span className="text-sm font-semibold text-blue-800 tracking-tight animate-pulse">Scanning live sources for more opportunities...</span>
+                        </motion.div>
+                      )}
                       {jobs.map((job, index) => (
                         <motion.div
                           key={index}
