@@ -261,38 +261,58 @@ export function EditorSidebar() {
                   <>
                     <div className="flex-1">
                       {prevSection && (
-                        <Button 
-                          variant="outline" 
+                        <motion.button 
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => setActiveSection(prevSection.id)}
-                          className="w-full sm:w-auto h-auto py-3 px-6 text-zinc-600 group"
+                          className="relative w-full sm:w-auto h-[52px] px-8 text-zinc-600 hover:text-zinc-900 bg-white hover:bg-zinc-50 border border-zinc-200 shadow-sm hover:shadow-md transition-all duration-300 group rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 flex items-center justify-center font-medium"
                         >
-                          <span className="mr-2 transform group-hover:-translate-x-1 transition-transform">&larr;</span>
-                          <span className="truncate">Back<span className="hidden sm:inline"> to {prevSection.label}</span></span>
-                        </Button>
+                          <span className="absolute inset-0 bg-gradient-to-r from-zinc-100/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            <span className="transform group-hover:-translate-x-1 transition-transform duration-300">&larr;</span>
+                            <span>Back<span className="hidden sm:inline text-zinc-400 font-normal ml-1">to {prevSection.label}</span></span>
+                          </span>
+                        </motion.button>
                       )}
                     </div>
                     <div className="flex-1 flex justify-end">
                       {nextSection ? (
-                        <Button 
+                        <motion.button 
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
                           onClick={() => setActiveSection(nextSection.id)}
-                          className="w-full sm:w-auto h-auto py-3 px-6 bg-zinc-900 hover:bg-zinc-800 text-white shadow-md group"
+                          className="relative w-full sm:w-auto h-[52px] px-8 bg-zinc-900 group rounded-xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.4)] transition-shadow duration-300"
                         >
-                          <span className="truncate">Proceed<span className="hidden sm:inline"> to {nextSection.label}</span></span>
-                          <span className="ml-2 transform group-hover:translate-x-1 transition-transform">&rarr;</span>
-                        </Button>
+                          {/* Animated Border Gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                          
+                          {/* Shimmer effect running across */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000 ease-in-out pointer-events-none" />
+                          
+                          <span className="relative z-10 flex items-center justify-center gap-2 text-white font-semibold">
+                            <span>Proceed<span className="hidden sm:inline font-normal text-zinc-400 ml-1">to {nextSection.label}</span></span>
+                            <span className="transform group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
+                          </span>
+                        </motion.button>
                       ) : (
-                        <Button 
+                        <motion.button 
+                          whileHover={{ scale: 1.03, boxShadow: "0px 10px 30px -5px rgba(37, 99, 235, 0.4)" }}
+                          whileTap={{ scale: 0.97 }}
                           onClick={() => {
-                            // On mobile, we might want to toggle preview, but here we just show a success message
-                            // or do nothing since it's the last step.
                             const previewBtn = document.querySelector('button:has(.lucide-eye)') as HTMLButtonElement;
                             if (previewBtn) previewBtn.click();
                           }}
-                          className="w-full sm:w-auto h-auto py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white shadow-md group border-none ring-0 focus-visible:ring-offset-2"
+                          className="relative w-full sm:w-auto h-[52px] px-8 bg-blue-600 text-white rounded-xl overflow-hidden flex items-center justify-center shadow-lg shadow-blue-600/30 border-none focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
                         >
-                          View Resume Preview 
-                          <span className="ml-2 transform group-hover:translate-x-1 transition-transform">&rarr;</span>
-                        </Button>
+                          {/* Richer animated shimmer */}
+                          <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-500 z-0" />
+                          <div className="absolute inset-0 w-full h-full bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.3)_50%,transparent_75%,transparent_100%)] bg-[length:250%_250%] group-hover:animate-shimmer z-10 pointer-events-none" />
+                          
+                          <span className="relative z-20 flex items-center justify-center gap-2 font-bold tracking-wide">
+                            View Preview 
+                            <span className="transform group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
+                          </span>
+                        </motion.button>
                       )}
                     </div>
                   </>

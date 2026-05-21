@@ -79,6 +79,19 @@
   .safe-pt {
     padding-top: env(safe-area-inset-top, 20px);
   }
+  
+  .animate-shimmer {
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: 200% center;
+    }
+    100% {
+      background-position: -200% center;
+    }
+  }
 }
 
 /* Custom Scrollbar for Webkit */
