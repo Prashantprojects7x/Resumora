@@ -35,6 +35,9 @@ const COLORS = [
   { name: 'Amber', value: '#f59e0b' },
   { name: 'Slate', value: '#475569' },
   { name: 'Black', value: '#000000' },
+  { name: 'Charcoal', value: '#334155' },
+  { name: 'Navy', value: '#1e3a8a' },
+  { name: 'Burgundy', value: '#7f1d1d' },
 ];
 
 const FONTS = [

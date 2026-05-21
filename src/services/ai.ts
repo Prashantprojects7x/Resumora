@@ -390,6 +390,36 @@ export async function tailorResumeData(resumeContent: string, jobDescription: st
   }
 }
 
+export async function upgradeResumeATS(resumeData: ResumeData): Promise<ResumeData> {
+  try {
+    const prompt = `You are an expert resume writer and ATS (Applicant Tracking System) optimizer. 
+    Analyze the provided Resume JSON data and return an upgraded JSON exactly matching the input structure, but with the following ATS enhancements applied:
+    - If the summary is missing, add a professional, keyword-rich ATS-friendly summary.
+    - If experience descriptions are brief or lack action verbs, enhance them slightly to be more impactful.
+    - If skills are lacking (under 10), suggest and add relevant missing professional skills based on their experience.
+    - If contact information is partially missing (like location), add a placeholder like "City, Country".
+    - Do NOT change IDs or structural attributes.
+    
+    Resume JSON:
+    ${JSON.stringify(resumeData)}
+    
+    Return the upgraded ATS-friendly JSON object.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.1-pro-preview",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    return parseJsonResponse(response.text) as ResumeData;
+  } catch (error) {
+    console.error("Error upgrading resume ATS:", error);
+    throw error;
+  }
+}
+
 export async function translateResumeData(resumeData: ResumeData, targetLanguage: string): Promise<ResumeData> {
   try {
     const prompt = `You are an expert professional translator and resume writer. 

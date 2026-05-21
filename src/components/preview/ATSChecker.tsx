@@ -1,12 +1,12 @@
 import { useState, useDeferredValue } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Activity, X, CheckCircle2, AlertCircle, Target, ChevronRight, Briefcase, Sparkles, Loader2 } from 'lucide-react';
+import { Activity, X, CheckCircle2, AlertCircle, Target, ChevronRight, Briefcase, Sparkles, Loader2, Edit3, Wand2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Textarea } from '../ui/Textarea';
 import { useResumeStore } from '@/store/useResumeStore';
 import { analyzeResume } from '@/lib/atsChecker';
-import { analyzeJobMatch, JobMatchResult } from '@/services/ai';
+import { analyzeJobMatch, JobMatchResult, upgradeResumeATS } from '@/services/ai';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -16,8 +16,9 @@ export function ATSChecker() {
   const [jobDescription, setJobDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [jobMatchResult, setJobMatchResult] = useState<JobMatchResult | null>(null);
+  const [isUpgrading, setIsUpgrading] = useState(false);
 
-  const { data } = useResumeStore();
+  const { data, updateData } = useResumeStore();
   
   // Defer the analysis to avoid blocking the main thread during typing
   const deferredData = useDeferredValue(data);
@@ -33,6 +34,24 @@ export function ATSChecker() {
     if (score >= 80) return 'bg-emerald-500/10 border-emerald-500/20';
     if (score >= 60) return 'bg-yellow-500/10 border-yellow-500/20';
     return 'bg-red-500/10 border-red-500/20';
+  };
+
+  const handleAiUpgrade = async () => {
+    setIsUpgrading(true);
+    try {
+      toast.info('AI is analyzing and upgrading your resume for ATS...', { id: 'ats-upgrade' });
+      const upgradedData = await upgradeResumeATS(data);
+      updateData(upgradedData);
+      toast.success('Resume upgraded successfully!', { id: 'ats-upgrade' });
+    } catch (error: any) {
+      if (error?.message?.includes('429') || error?.message?.toLowerCase().includes('rate')) {
+        toast.error('AI Rate Limit Exceeded', { description: 'Please wait a moment before trying again.', id: 'ats-upgrade' });
+      } else {
+        toast.error('Failed to upgrade resume. Please try again.', { id: 'ats-upgrade' });
+      }
+    } finally {
+      setIsUpgrading(false);
+    }
   };
 
   const handleAnalyzeJobMatch = async () => {
@@ -68,9 +87,10 @@ export function ATSChecker() {
   return (
     <>
       <Button 
+        type="button"
         onClick={() => setIsOpen(true)}
-        onPointerDown={(e) => e.stopPropagation()}
-        className="group relative overflow-hidden bg-white/90 backdrop-blur-xl hover:bg-white text-zinc-900 border border-zinc-200/80 shadow-sm hover:shadow-md rounded-full h-8 md:h-10 px-2 md:px-3 transition-all duration-300 flex items-center gap-1.5 md:gap-2 active:scale-95"
+        onPointerDown={(e) => { e.stopPropagation(); }}
+        className="group relative overflow-hidden bg-white/90 backdrop-blur-xl hover:bg-white text-zinc-900 border border-zinc-200/80 shadow-sm hover:shadow-md rounded-full h-8 md:h-10 px-2 md:px-3 transition-all duration-300 flex items-center gap-1.5 md:gap-2 active:scale-95 pointer-events-auto"
       >
         <div className="relative flex items-center justify-center w-6 h-6 md:w-6 md:h-6">
           <svg viewBox="0 0 32 32" className="w-full h-full -rotate-90 drop-shadow-sm">
@@ -123,7 +143,7 @@ export function ATSChecker() {
 
       <AnimatePresence>
         {isOpen && createPortal(
-          <div className="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
+          <div className="pan-pinch-ignore fixed inset-0 z-[100] flex items-center justify-center pointer-events-none">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -236,7 +256,7 @@ export function ATSChecker() {
                             <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
                             Critical Improvements ({result.improvements.length})
                           </h3>
-                          <div className="grid gap-3">
+                          <div className="grid gap-3 mb-8">
                             {result.improvements.map((item, i) => (
                               <motion.div 
                                 initial={{ opacity: 0, x: -10 }}
@@ -251,6 +271,37 @@ export function ATSChecker() {
                                 <span className="leading-relaxed font-medium">{item}</span>
                               </motion.div>
                             ))}
+                          </div>
+                          
+                          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mt-2 border-t border-zinc-100 pt-8">
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setIsOpen(false);
+                                toast.info('You can now manually edit your resume to add the missing information.');
+                              }}
+                              className="w-full sm:w-auto px-8 h-12 rounded-xl text-zinc-700 hover:text-zinc-900 bg-white hover:bg-zinc-50 border-zinc-200 shadow-sm font-semibold flex items-center justify-center gap-2"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                              Manually Add
+                            </Button>
+                            <Button
+                              onClick={handleAiUpgrade}
+                              disabled={isUpgrading}
+                              className="w-full sm:w-auto px-8 h-12 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-600/30 border-none font-bold flex items-center justify-center gap-2 transition-all active:scale-95"
+                            >
+                              {isUpgrading ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                  Upgrading...
+                                </>
+                              ) : (
+                                <>
+                                  <Wand2 className="w-4 h-4" />
+                                  AI Upgrade Resume
+                                </>
+                              )}
+                            </Button>
                           </div>
                         </section>
                       )}
